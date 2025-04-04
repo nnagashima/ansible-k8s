@@ -18,9 +18,10 @@
   become: yes
   shell: apt-get update
 
-- name: Install kubeadm, kubelet
+- name: Install kubeadm, kubelet, kubectl
   apt:
     pkg:
     - kubelet
     - kubeadm
+    - kubectl
     state: present
