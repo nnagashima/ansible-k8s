@@ -1,0 +1,7 @@
+---
+# handlers file for keepalived
+- name: Restart keepalived
+  systemd:
+    name: keepalived
+    state: restarted
+  become: yes

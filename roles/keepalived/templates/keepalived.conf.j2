@@ -1,0 +1,43 @@
+global_defs {
+  notification_email {
+  }
+  router_id LVS_DEVEL
+  vrrp_skip_check_adv_addr
+  vrrp_garp_interval 0
+  vrrp_gna_interval 0
+}
+
+vrrp_script chk_haproxy {
+  script "killall -0 haproxy"
+  interval 2
+  weight 2
+}
+
+vrrp_instance haproxy-vip {
+  state {{ keepalived_state }}
+  priority {{ keepalived_priority }}
+  interface {{ keepalived_interface }}
+  virtual_router_id {{ keepalived_virtual_router_id }}
+  advert_int {{ keepalived_advert_int }}
+  authentication {
+    auth_type PASS
+    auth_pass {{ keepalived_auth_pass }}
+  }
+
+  unicast_src_ip {{ hostvars[inventory_hostname]['ansible_host'] }}
+  unicast_peer {
+    {% for host in groups['master'] %}
+      {% if host != inventory_hostname %}
+        {{ hostvars[host]['ansible_host'] }}
+      {% endif %}
+    {% endfor %}
+  }
+
+  virtual_ipaddress {
+    {{ keepalived_virtual_ip }}/{{ keepalived_virtual_netmask }}
+  }
+
+  track_script {
+    chk_haproxy
+  }
+}

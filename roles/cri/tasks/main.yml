@@ -1,0 +1,76 @@
+- name: Load kernel module
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - br_netfilter
+    - overlay
+
+- name: Ensure kernel modules are loaded on boot
+  lineinfile:
+    path: /etc/modules-load.d/crio.conf
+    line: "{{ item }}"
+    create: yes
+  loop:
+    - br_netfilter
+    - overlay
+
+- name: Add sysctl conf
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
+    state: present
+  loop:
+    - { name: net.ipv4.ip_forward, value: "1" }
+    - { name: net.bridge.bridge-nf-call-iptables, value: "1" }
+    - { name: net.bridge.bridge-nf-call-ip6tables, value: "1" }
+
+- name: Install dependencies 
+  apt:
+    name:
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+    state: present
+
+- name: Ensure keyrings directory exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Add CRI-O GPG key
+  get_url:
+    url: https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v1.32/deb/Release.key
+    dest: /etc/apt/keyrings/cri-o-apt-keyring.gpg
+    mode: '0644'
+    force: true
+
+- name: Add CRI-O repository
+  copy:
+    dest: /etc/apt/sources.list.d/cri-o.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v1.32/deb/ /
+    mode: '0644'
+
+- name: Run apt-get update 
+  become: yes
+  shell: apt-get update
+
+- name: Install CRI-O
+  apt:
+    name: cri-o
+    state: present
+
+- name: Ensure CRI-O config directory exists
+  file:
+    path: /etc/crio
+    state: directory
+    mode: '0755'
+
+- name: Start and enable CRI-O
+  systemd:
+    name: crio
+    enabled: true
+    state: started

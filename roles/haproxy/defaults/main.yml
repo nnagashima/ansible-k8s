@@ -1,0 +1,13 @@
+---
+# defaults file for haproxy
+haproxy_listen_port: 8443
+haproxy_backend_servers:
+  - name: kube-apiserver-1
+    ip: 192.168.21.31
+    port: 6443
+  - name: kube-apiserver-2
+    ip: 192.168.21.32
+    port: 6443
+  - name: kube-apiserver-3
+    ip: 192.168.21.33
+    port: 6443

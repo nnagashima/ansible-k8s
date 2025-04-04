@@ -1,0 +1,19 @@
+---
+# tasks file for common
+
+- name: Run apt-get update 
+  become: yes
+  shell: apt-get update
+
+- name: apt upgrade all packages
+  apt:
+    upgrade: dist
+
+- name: Install https repo for apt
+  apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    state: present

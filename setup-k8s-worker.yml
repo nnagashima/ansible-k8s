@@ -1,0 +1,11 @@
+---
+- hosts: worker
+  gather_facts: true
+  become: yes
+  roles:
+    - role: common
+      tags: cmn
+    - role: cri
+      tags: cri
+    - role: k8s-server
+      tags: k8s

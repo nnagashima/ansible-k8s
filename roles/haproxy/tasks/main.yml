@@ -1,0 +1,22 @@
+---
+# tasks file for haproxy
+- name: Install HAProxy
+  apt:
+    name: haproxy
+    state: present
+  become: yes
+
+- name: Copy HAProxy config file
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  become: yes
+  notify:
+    - Restart HAProxy
+
+- name: Enable HAProxy service
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+  become: yes

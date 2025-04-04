@@ -1,0 +1,22 @@
+---
+# tasks file for keepalived
+- name: Install keepalived
+  apt:
+    name: keepalived
+    state: present
+  become: yes
+
+- name: Copy keepalived config file
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  become: yes
+  notify:
+    - Restart keepalived
+
+- name: Enable keepalived service
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: started
+  become: yes

@@ -1,0 +1,11 @@
+[master]
+ray-master01	ansible_host=192.168.21.31
+ray-master02    ansible_host=192.168.21.32
+ray-master03    ansible_host=192.168.21.33
+
+[worker]
+ray-worker01    ansible_host=192.168.21.41
+ray-worker02	ansible_host=192.168.21.42
+ray-worker03    ansible_host=192.168.21.43
+ray-worker04    ansible_host=192.168.21.44
+ray-worker05    ansible_host=192.168.21.45
