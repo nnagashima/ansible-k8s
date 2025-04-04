@@ -6,5 +6,5 @@ keepalived_interface: eth0
 keepalived_virtual_router_id: 60
 keepalived_advert_int: 1
 keepalived_auth_pass: "1111"
-keepalived_virtual_ip: "192.168.12.20"
+keepalived_virtual_ip: "192.168.21.30"
 keepalived_virtual_netmask: "24"
